@@ -6,13 +6,14 @@ class Element {
     var contents: [String]
     var width : Int
     var height : Int
-    let empty_char: Character = " "
+    //let empty_char: Character = ("".characters)[0]
+    let empty_char: String = " "
     
-    init(){
+    /*init(){
         self.contents = []
         width = 0
         height = 0
-    }
+    }*/
     
     init(contents : [String] ){
         //print(self.empty_char.characters.count)
@@ -23,11 +24,10 @@ class Element {
     
     func above(_ that : Element)-> Element  {
         
-        
         let this1 = self.widen(w:that.width) //this widen that.width
         let that1 = that.widen(w:self.width)    //that widen this.width
-        print("in above")
-        print((this1.contents + that1.contents).joined(separator: ""))
+       // print("in above")
+       // print((this1.contents + that1.contents).joined(separator: ""))
         
         return elem(this1.contents + that1.contents)
     }
@@ -53,9 +53,11 @@ class Element {
             
         }
         else {
+           // print("width ", w)
             let left = elem(empty_char, width : (w - width) / 2, height : height)
+            //print(left.width ,  " ", left.height)
             let right = elem(empty_char, width : w - width - left.width,height : height)
-            
+            //print(right.width, " ", right.height)
             return left.beside(self.beside(right))
             //left beside this beside right
         }
@@ -67,10 +69,11 @@ class Element {
         }
             
         else {
-            let top = elem(empty_char, width : width, height : (h - height) / 2)
-           
+            //print("height, ", h)
+            let top = elem(empty_char, width : width, height : ((h - height) / 2))
+            //print(top.height)
             let bot = elem(empty_char, width : width, height : h - height - top.height)
-           
+            //print(bot.height)
             return top.above(self.above(bot))
            
         }
@@ -101,18 +104,16 @@ extension Element {
     
     fileprivate class UniformElement : Element {
         
-        init(ch:Character , width: Int , height : Int) {
+        init(ch:String , width: Int , height : Int) {
             let contents : [String]
             if height == 0 {
-                 contents = [""]
+                 //print("in 0", " ch ", ch, " width ", width , " height ", height)
+                 contents = [ch]
                 
             }
             else {
-            //print("inside uniform element")
-            //let line = String(ch) * width
-            //print(ch)
-            //print(width)
-            let line   =  String(repeating: String(ch), count: width)
+            
+            let line   =  String(repeating: ch, count: width)
             //print(line)
             //let contents = Array.fill(height)(line)
             //print(height)
@@ -135,7 +136,7 @@ extension Element {
         return  ArrayElement(contents_self : contents)
     }
     
-    func elem(_ chr: Character, width: Int, height: Int) -> Element
+    func elem(_ chr: String, width: Int, height: Int) -> Element
     {
         
         return UniformElement(ch: chr, width: width, height: height)
@@ -148,9 +149,11 @@ extension Element {
     
 }
 
-var element = Element(contents : ["-"])
-let verticalBar = element.elem("|", width : 1, height : 6)
-let horizontalBar = element.elem("-", width : 6, height : 1)
+var element = Element(contents : [","])
+let space = element.elem(" ")
+let corner = element.elem("+")
+//let verticalBar = element.elem("|", width : 1, height : 6)
+//let horizontalBar = element.elem("-", width : 6, height : 1)
 //print(horizontalBar.description)
 
 func spiral(_ nEdges: Int, direction: Int) ->Element {
@@ -159,8 +162,8 @@ func spiral(_ nEdges: Int, direction: Int) ->Element {
         return e
     }
     else {
-        let space = element.elem(" ")
-        let corner = element.elem("+")
+        //let space = element.elem(" ")
+        //let corner = element.elem("+")
         
         let sp = spiral(nEdges-1, direction : ((direction + 3) % 4))
         
@@ -177,7 +180,7 @@ func spiral(_ nEdges: Int, direction: Int) ->Element {
             
         }
         else if direction == 2 {
-            return (space.beside ( sp )).above(horizontalBar.above(corner ))
+            return (space.beside ( sp )).above(horizontalBar.beside(corner ))
             
         }
         else{
@@ -191,11 +194,11 @@ func spiral(_ nEdges: Int, direction: Int) ->Element {
 var nSides = 6 //args(0).toInt
 print(spiral(nSides, direction: 0).description)
 
-/* nSides = 11 //args(0).toInt
+ nSides = 11 //args(0).toInt
 print(spiral(nSides, direction: 0).description)
 
 
  nSides = 17 //args(0).toInt
-print(spiral(nSides, direction: 0).description)*/
+print(spiral(nSides, direction: 0).description)
 
 
